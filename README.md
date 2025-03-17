@@ -1,9 +1,6 @@
 # OutilsTraitementCorpus
 
-# TP1
-
-
-## TP: Parite 1
+## TP 1 : Parite 1
 
 1. **CoNLL-2003** est un dataset pour la reconnaissance d’entités nommées. C’est un dataset annoté, plus précisément pour la "language-independent named entity recognition".  
 2. Il existe 8 fichiers qui s’occupent de l’anglais et de l’allemand :  
@@ -34,3 +31,7 @@
    - FLERT XLM-R
 
 5. C’est un corpus multilingue.
+
+## TP 1 : partie 2
+
+J'ai encore besoin de réfléchir pour le projet.
