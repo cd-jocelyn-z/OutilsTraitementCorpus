@@ -34,4 +34,24 @@
 
 ## TP 1 : partie 2
 
-J'ai encore besoin de réfléchir pour le projet.
+La tâche est la génération de texte à partir des métadonnées. Le sujet porte sur le programme d’une radio indépendante aux États-Unis appelée WFMU, reconnue aujourd’hui comme la plus ancienne radio free-form du pays. Cela signifie que les DJs y diffusent librement la musique de leur choix, sans contrainte publicitaire.
+
+Les descriptions des programmes sont souvent très courtes et parfois seulement quelques mots-clés ou une ou deux phrases, mais la station publie les playlists complètes de chaque diffusion.
+
+Je souhaite donc créer des données synthétiques à partir des métadonnées, des descriptions existantes, et les playlist diffusés afin de générer des descriptions plus pertinentes pour chaque programme.
+
+Ce type de données augmentées permettra d’entraîner un modèle capable de produire automatiquement des descriptions à partir d’éléments structurés.
+
+Le type de données comprend par exemple :
+
+- program name
+- episode date
+- program url
+- description
+- playlist url
+- tracks
+   - artist 
+   - track
+   - album
+
+L’idée est d’enrichir les descriptions des programmes en créant un dataset synthétique à partir des métadonnées et des playlists, puis d’entraîner un modèle transformateur capable de générer automatiquement un texte fluide et pertinent à partir de ces éléments, même lorsque les descriptions initiales sont très limitées.
