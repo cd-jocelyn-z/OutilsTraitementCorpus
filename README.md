@@ -55,3 +55,26 @@ Le type de données comprend par exemple :
    - album
 
 L’idée est d’enrichir les descriptions des programmes en créant un dataset synthétique à partir des métadonnées et des playlists, puis d’entraîner un modèle transformateur capable de générer automatiquement un texte fluide et pertinent à partir de ces éléments, même lorsque les descriptions initiales sont très limitées.
+
+J'ai vérifié leur fichier [robots.txt](https://wfmu.org/robots.txt), qui affiche :
+
+> User-agent: *
+   Disallow: /artistbrowser.php?action=artist
+   User-agent: Slurp
+   Crawl-delay: 30
+   User-agent: SemrushBot
+   Disallow: /
+   User-agent: SemrushBot-SA
+   Disallow: /
+   User-agent: SemrushBot-BA
+   Disallow: /
+   User-agent: SemrushBot-SI
+   Disallow: /
+   User-agent: SemrushBot-SWA
+   Disallow: /
+   User-agent: SemrushBot-CT
+   Disallow: /
+   User-agent: SemrushBot-BM
+   Disallow: /
+
+Ce qui nous permet d’effectuer le scraping de leur page de planning ainsi que des pages permettant de récupérer leurs playlists.
