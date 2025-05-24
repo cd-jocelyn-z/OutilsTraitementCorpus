@@ -78,3 +78,38 @@ J'ai vérifié leur fichier [robots.txt](https://wfmu.org/robots.txt), qui affic
    Disallow: /
 
 Ce qui nous permet d’effectuer le scraping de leur page de planning ainsi que des pages permettant de récupérer leurs playlists.
+
+## TP 2 : Récuperer votre corpus de travail à partir d’une resource web (pas d’API)
+
+C’était intéressant, car je suis plutôt habituée à des sites plus “prévisibles” quand il s’agit de scraper des informations. Celui-ci est un site assez ancien, que certaines personnes essaient encore d’entretenir. Il dispose d’une archive riche, mais certaines informations ne sont pas aussi accessibles qu’elles en ont l’air. Il y avait de nombreux cas où les données n’étaient pas dans les balises qu’on s’attendrait à trouver.
+
+Voici les pages qui m’ont intéressée :
+
+1. **La page où se trouve le planning**
+   – J’ai pris seulement 7 programmes pour ce projet.
+
+2. **La page où se trouve l’information du programme, où l’on trouve l’indexation des diffusions faites.**
+
+3. **La page playlist, qui contient un tableau avec les informations sur les musiques jouées pendant la diffusion.**
+   – J’ai choisi de prendre seulement les 5 diffusions les plus récentes de chaque programme.
+
+
+Voici les scripts pour récupérer mes données afin de constituer le corpus :
+
+1. [datastructures.py](./datastructures.py)
+   – Après mes recherches sur les données possibles à utiliser pour mon corpus, j’ai défini la structure avec des `dataclasses` afin de faciliter, plus tard, la tâche de sérialiser et désérialiser, et d’avoir une structure claire pour le corpus.
+
+2. [corpus\_utils.py](./corpus_utils.py)
+   – J’y crée des fonctions pour sérialiser et désérialiser selon la structure définie.
+
+3. [crawler.py](./crawler.py)
+   – Le but, c’est de partir de la page où l’on trouve la liste des diffusions d’un programme, puis de suivre chaque lien “See the playlist” ou “Listen” afin de naviguer vers la page contenant le tableau des chansons jouées.
+   – À la fin, je n’ai pas utilisé de bibliothèque dédiée pour crawler, car pour cette tâche, cela ne me semblait pas nécessaire, mais j’ai gardé l’idée en tête lors de la création de ce script.
+
+4. [scraper.py](./scraper.py)
+   – J’y ai organisé mes fonctions pour faire un scrape d’une page en récupérant les éléments que j’avais définis dans `datastructures.py`.
+
+5. [run\_pipeline.py](./run_pipeline.py)
+   – Après avoir testé les autres scripts, j’ai créé ce script pipeline pour exécuter toutes les étapes nécessaires dans l’ordre, afin de constituer le corpus.
+
+
