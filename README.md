@@ -118,3 +118,9 @@ Voici les scripts pour récupérer mes données afin de constituer le corpus :
 Cela permettra de constituer un corpus plus complet et mieux adapté à l’analyse, tout en explorant la génération de données synthétiques de la tâche suivante.
 
 ### Vis 1 :
+
+
+| ![Figure 1 – Loi de Zipf](figures/zipfs.png) |
+|:--:|
+| *Figure 1 : Visualisation de la loi de Zipf appliquée au corpus.* |
+ La courbe suit une distribution typique observée dans les langues naturelles. Cette première représentation pourra être améliorée avec l’augmentation des données.
