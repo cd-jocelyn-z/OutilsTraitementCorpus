@@ -1,5 +1,17 @@
 from dataclasses import dataclass, field
 from typing import List, Optional
+from pydantic import BaseModel
+
+class GeneratedDesc(BaseModel):
+    """
+    Modèle utilisé pour valider la description générée par le modèle.
+
+    Attributs
+    generated_desc : str
+        Une courte description synthétique de l’épisode.
+    """
+    generated_desc: str
+
 
 @dataclass
 class Track:
