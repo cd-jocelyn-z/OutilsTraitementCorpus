@@ -5,6 +5,19 @@ from datastructures import Episode, Track
 from typing import List, Optional, Tuple
 
 def scrape_schedule(url: str) -> List[Episode]:
+    """
+    Fonction qui permet de scraper la page contenant le tableau 
+    des programmes de diffusion de la radio.
+
+    Args :
+        url (str) : Lien vers la page à traiter.
+    
+    Retour :
+        episodes (List[Episode]) : Liste d'objets Episode contenant 
+        les informations de chaque diffusion, telles que le nom du programme, 
+        le DJ, la description courte et le créneau horaire de diffusion.
+    """
+
     r = requests.get(url)
     soup = BeautifulSoup(r.text, "html.parser")
     program_cells = soup.find_all("td", class_="program")
@@ -37,6 +50,19 @@ def scrape_schedule(url: str) -> List[Episode]:
     return episodes
 
 def scrape_playlist(url: str) -> Tuple[List[Track], Optional[str], Optional[str]]:
+    """
+    Fonction qui permet de scraper la page de la playlist radio
+    et d’en extraire les morceaux diffusés ainsi que les métadonnées de l’épisode.
+
+    Args :
+        url (str) : Lien vers la page de la playlist à traiter.
+
+    Retour :
+        Tuple contenant :
+            - tracks (List[Track]) : Liste d’objets Track représentant les morceaux diffusés.
+            - episode_title (Optional[str]) : Titre de l’épisode (s’il est disponible).
+            - episode_date (Optional[str]) : Date de diffusion de l’épisode (si disponible).
+    """
     r = requests.get(url)
     soup = BeautifulSoup(r.text, "html.parser")
     tracks = []
