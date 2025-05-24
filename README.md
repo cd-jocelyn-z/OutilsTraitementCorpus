@@ -135,3 +135,11 @@ La tâche que j’ai définie consiste à générer une description synthétique
 Pour choisir l’architecture adaptée à ce type de tâche, le tableau fourni pendant le cours recommande une architecture Decoder, avec des modèles comme GPT ou LLaMA.
 
 J’ai choisi d’utiliser Gemma 3:4B, un modèle Decoder open-source de la famille LLaMA, accessible via Ollama car ce modèle est bien adapté à la génération de texte naturel, notamment lorsqu’il s’agit de structurer du contenu à partir de prompts un peu complexes. Comme mon corpus de base contient peu d’informations (une courte description et des métadonnées), ce modèle s’est révélé pertinent, à la fois pour la qualité du texte généré et sa capacité à tourner localement sur ma machine. Il permet aussi de produire une sortie structurée au format JSON, ce qui m’a permis d’intégrer directement les résultats dans mon corpus.
+
+## Données augmentées
+
+Le script utilisé pour générer les données augmentées se trouve ici :  
+[synthetic_data_generator.py](https://github.com/cd-jocelyn-z/OutilsTraitementCorpus/blob/main/src/process/synthetic_data_generator.py)
+
+Les données générées sont disponibles au lien suivant :  
+[Données augmentées](https://drive.google.com/file/d/1PFbdwANb3KN5M9ztEz4ueXTSjZH85Ow-/view?usp=sharing)
