@@ -8,6 +8,17 @@ import time
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 def main():
+    """
+    Fonction principale qui orchestre les appels aux fonctions provenant d'autres scripts
+    afin d’exécuter les étapes dans le bon ordre pour récupérer un corpus à partir d’un site web.
+
+    Elle crée deux fichiers :
+    1. Un fichier initial qui contient les informations extraites d’une première page (le tableau des programmes).
+    2. Un fichier enrichi qui ajoute des informations extraites de pages secondaires (les playlists).
+
+    L’objectif est d’aboutir à un corpus structuré selon les définitions spécifiées dans les datastructures.
+    """
+
     print("Scraping WFMU schedule...")
     base_episodes = scrape_schedule("https://www.wfmu.org/table")
 
@@ -22,7 +33,6 @@ def main():
     }
 
     filtered_episodes = [ep for ep in base_episodes if ep.program_name.lower() in target_titles]
-
     corpus = Corpus(episodes=filtered_episodes)
     raw_path = PROJECT_ROOT / "data/raw/schedule_stub.json"
     raw_path.parent.mkdir(parents=True, exist_ok=True)
