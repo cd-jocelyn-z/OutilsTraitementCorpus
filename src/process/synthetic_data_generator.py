@@ -2,9 +2,13 @@ import ollama
 from pathlib import Path
 from textwrap import dedent
 from corpus_utils import load_json, save_json
-from datastructures import GeneratedDesc
+from datastructures import GeneratedDesc, Corpus
+from typing import List, Dict
 
-def create_prompt(program_name: str, ep_title: str, desc: str, schedule_time: str, tracks: str):
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+
+def create_prompt(program_name: str, ep_title: str, desc: str, schedule_time: str, tracks: str) -> List[Dict]:
+
     return [
         {
             "role": "system",
@@ -46,68 +50,108 @@ def create_prompt(program_name: str, ep_title: str, desc: str, schedule_time: st
     ]
 
 
+import json
 
-def run_llm_synthetic_desc(ep, messages, model_name: str = "gemma3:4b", verbose: bool = True):
-    try:
-        response = ollama.chat(
-            model=model_name,
-            messages=messages,
-            options={
-                "temperature": 0.7,
-                "top_p": 0.9,
-                "max_tokens": 300
-            },
-            format=GeneratedDesc.model_json_schema(),
-        )
 
-        llm_gen_description = response.message.content
+def run_llm_synthetic_desc(ep, messages, model_name: str = "gemma3:4b", max_retries: int = 3):
+    """
+    Runs the LLM to generate a response with retry logic.
+    """
+    for attempt in range(max_retries):
         try:
-            validated = GeneratedDesc.model_validate_json(llm_gen_description)
-            ep.synthetic_description = validated.generated_desc
+            response = ollama.chat(
+                model=model_name,
+                messages=messages,
+                options={
+                    "temperature": 0.7,
+                    "top_p": 0.7,
+                },
+                format=GeneratedDesc.model_json_schema(),
+            )
+            llm_gen_description = response.message.content
+            try:
+                parsed_description = json.loads(llm_gen_description)
+                validated = GeneratedDesc.model_validate_json(json.dumps(parsed_description))
+                ep.synthetic_desc = validated.generated_desc
+                break
+            except json.JSONDecodeError as json_error:
+                print(f"Attempt {attempt + 1}/{max_retries}: Invalid JSON from LLM response.")
+                print("LLM Response:\n", llm_gen_description)
+                print("JSON Parsing Error:\n", json_error)
+                if attempt == max_retries - 1:
+                    ep.synthetic_desc = None
+            except Exception as schema_validation_error:
+                print(f"Attempt {attempt + 1}/{max_retries}: Schema validation failed for episode.")
+                print("LLM Generated Response:\n", llm_gen_description)
+                print("Schema Validation Error:\n", schema_validation_error)
+                if attempt == max_retries - 1: 
+                    ep.synthetic_desc = None
+
         except Exception as e:
-            print(f"Validation error for episode: {ep.episode_title}")
-            print("LLM Generated Description:\n", llm_gen_description)
-            print("Error:\n", e)
-            ep.synthetic_description = None
-
-        original_length = len(ep.short_description) if ep.short_description else 0
-        synthetic_length = len(ep.synthetic_description or "")
-        print(f"\nProgram: {ep.program_name}")
-        print(f"Episode: {ep.episode_title}")
-        print(f"Synthetic Description:\n{ep.synthetic_description}")
-        print(f"Original desc length: {original_length}")
-        print(f"Synthetic desc length: {synthetic_length}")
-        print("-" * 60)
-
-    except Exception as e:
-        print(f"Ollama generation failed for episode: {ep.episode_title}, model={model_name}")
-        print(e)
-        ep.synthetic_description = None
+            print(
+                f"Attempt {attempt + 1}/{max_retries}: Ollama generation failed for episode: {ep.episode_title}, model={model_name}")
+            print(e)
+            if attempt == max_retries - 1:
+                ep.synthetic_desc = None
+            continue
 
 
-def generate_and_save_augmented_json(input_path: Path, output_path: Path):
-    corpus = load_json(input_path)
-    episodes = corpus.episodes[:5] 
+    original_length = len(ep.short_description) if ep.short_description else 0
+    synthetic_length = len(ep.synthetic_desc or "")
+    print(f"\nProgram: {ep.program_name}")
+    print(f"Episode: {ep.episode_title}")
+    print(f"Synthetic Description:\n{ep.synthetic_desc}")
+    print(f"Original desc length: {original_length}")
+    print(f"Synthetic desc length: {synthetic_length}")
+    print("-" * 60)
 
-    for ep in episodes:
-        tracks = " ".join(t.track for t in ep.tracks if t.track)
-        prompt = create_prompt(
-        ep.program_name,
-        ep.episode_title,
-        ep.short_description,
-        ep.schedule_time,
-        tracks
-    )
-        run_llm_synthetic_desc(ep, prompt)
+
+def generate_and_save_augmented_json(input_path: Path, output_path: Path, num_episodes: int =35) -> tuple[Corpus, int]:
+    corpus: Corpus = load_json(input_path)
+    episodes = corpus.episodes[:num_episodes]
+
+    success_count = 0
+    total_count = len(episodes)
+
+    for i, ep in enumerate(episodes, 1):
+        print(f"\nProcessing episode {i}/{total_count}: {ep.episode_title}")
+        try:
+
+            tracks = " ".join(
+                f"{t.artist} - {t.track}" +
+                (f" [{t.album}]" if t.album else "") +
+                (f" ({t.label})" if t.label else "") +
+                (f" ({t.year})" if t.year else "")
+                for t in ep.tracks
+            )
+
+            prompt = create_prompt(
+                ep.program_name,
+                ep.episode_title,
+                ep.short_description,
+                ep.schedule_time,
+                tracks
+            )
+
+            run_llm_synthetic_desc(ep, prompt)
+
+            if ep.synthetic_desc:
+                success_count += 1
+
+
+        except Exception as e:
+            print(f"Error processing episode {i}/{total_count}: {ep.episode_title}")
+            print(f"Error details: {str(e)}")
+            continue 
+    
 
     save_json(corpus, output_path)
-    print(f"\nSaved augmented corpus → {output_path}")
+    print(f"\nSaved augmented corpus: {output_path}")
+    print(f"Successfully processed: {success_count} / {total_count} episodes")
 
-    success_count = sum(1 for ep in episodes if ep.synthetic_description)
-    print(f"Total augmented: {success_count} / {len(episodes)}")
-
+    return corpus, success_count
 if __name__ == "__main__":
-    input_path = Path("data/clean/full_corpus.json")
-    output_path = Path("data/clean/full_corpus_augmented_ollama.json")
+    input_path = PROJECT_ROOT / "data" / "clean" / "full_corpus.json"
+    output_path = PROJECT_ROOT / "data" / "clean" / "full_corpus_augmented_ollama.json"
 
     generate_and_save_augmented_json(input_path, output_path)
