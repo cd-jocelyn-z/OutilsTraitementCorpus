@@ -32,7 +32,7 @@
 
 5. C’est un corpus multilingue.
 
-## TP 1 : partie 2
+## TP 1 : Partie 2
 
 La tâche est la génération de texte à partir des métadonnées. Le sujet porte sur le programme d’une radio indépendante aux États-Unis appelée WFMU, reconnue aujourd’hui comme la plus ancienne radio free-form du pays. Cela signifie que les DJs y diffusent librement la musique de leur choix, sans contrainte publicitaire.
 
@@ -96,20 +96,25 @@ Voici les pages qui m’ont intéressée :
 
 Voici les scripts pour récupérer mes données afin de constituer le corpus :
 
-1. [datastructures.py](./datastructures.py)
+1. [datastructures.py](https://github.com/cd-jocelyn-z/OutilsTraitementCorpus/blob/main/scripts/process/datastructures.py)
    – Après mes recherches sur les données possibles à utiliser pour mon corpus, j’ai défini la structure avec des `dataclasses` afin de faciliter, plus tard, la tâche de sérialiser et désérialiser, et d’avoir une structure claire pour le corpus.
 
-2. [corpus\_utils.py](./corpus_utils.py)
+2. [corpus\_utils.py](https://github.com/cd-jocelyn-z/OutilsTraitementCorpus/blob/main/scripts/process/corpus_utils.py)
    – J’y crée des fonctions pour sérialiser et désérialiser selon la structure définie.
 
-3. [crawler.py](./crawler.py)
+3. [crawler.py](https://github.com/cd-jocelyn-z/OutilsTraitementCorpus/blob/main/scripts/process/crawler.py)
    – Le but, c’est de partir de la page où l’on trouve la liste des diffusions d’un programme, puis de suivre chaque lien “See the playlist” ou “Listen” afin de naviguer vers la page contenant le tableau des chansons jouées.
    – À la fin, je n’ai pas utilisé de bibliothèque dédiée pour crawler, car pour cette tâche, cela ne me semblait pas nécessaire, mais j’ai gardé l’idée en tête lors de la création de ce script.
 
-4. [scraper.py](./scraper.py)
+4. [scraper.py](https://github.com/cd-jocelyn-z/OutilsTraitementCorpus/blob/main/scripts/process/scraper.py)
    – J’y ai organisé mes fonctions pour faire un scrape d’une page en récupérant les éléments que j’avais définis dans `datastructures.py`.
 
-5. [run\_pipeline.py](./run_pipeline.py)
+5. [run\_pipeline.py](https://github.com/cd-jocelyn-z/OutilsTraitementCorpus/blob/main/scripts/process/run_pipeline.py)
    – Après avoir testé les autres scripts, j’ai créé ce script pipeline pour exécuter toutes les étapes nécessaires dans l’ordre, afin de constituer le corpus.
 
+## TP3 : Visualiser votre corpus et réaliser des statistiques de texte
 
+> **Note sur l’approche adoptée :** Les textes que j’ai récupérés jusqu’ici sont relativement courts, ce qui limite un peu la richesse des visualisations à cette étape. J’ai toutefois prévu de les enrichir dans la suite (TP4), en intégrant les métadonnées disponibles (nom de l’émission, DJ, date, morceaux joués, etc.) afin de générer des descriptions synthétiques.
+Cela permettra de constituer un corpus plus complet et mieux adapté à l’analyse, tout en explorant la génération de données synthétiques de la tâche suivante.
+
+### Vis 1 :
